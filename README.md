@@ -6,7 +6,7 @@
 ####
 2.封装RecycleView,支持下拉刷新和底部加载更多；
 ####
-3.将项目转为MVP
+3.将项目转为MVP。
 ### 截图
 ![Image](https://github.com/Developmc/Demo_News/blob/master/app/src/main/res/drawable/gif.gif) 
 
