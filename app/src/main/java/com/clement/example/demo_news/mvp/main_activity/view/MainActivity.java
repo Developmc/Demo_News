@@ -1,4 +1,4 @@
-package com.clement.example.demo_news;
+package com.clement.example.demo_news.mvp.main_activity.view;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -11,12 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.clement.example.demo_news.R;
 import com.clement.example.demo_news.base.BaseActivity;
+import com.clement.example.demo_news.mvp.main_activity.presenter.MainPresenter;
 import com.clement.example.demo_news.navigation.wx_new.WxNewFragment;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener ,MainView{
+    //持有presenter实例
+    private MainPresenter mainPresenter;
     @Override
     protected int getLayoutViewId() {
         return R.layout.activity_main;
@@ -24,7 +27,8 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void initVariables() {
-
+        //绑定关系
+        mainPresenter = new MainPresenter(this);
     }
 
     @Override
@@ -75,44 +79,24 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(mainPresenter!=null){
+            return mainPresenter.onOptionsItemSelected(item);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.wx_new_fragment) {
-            //跳转到fragment
-            replaceFragment(new WxNewFragment(),R.id.fragment_container);
-        } else if (id == R.id.new_fragment) {
-
-        } else if (id == R.id.picture_fragment) {
-
-        } else if (id == R.id.anecdote_fragment) {
-
-        } else if (id == R.id.hot_spot_fragment) {
-
-        }else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if(mainPresenter!=null){
+            return mainPresenter.onNavigationItemSelected(item);
         }
+        return false ;
+    }
 
+    @Override
+    public void closeDrawer() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

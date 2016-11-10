@@ -15,8 +15,8 @@ import android.view.View;
 import com.clement.example.demo_news.R;
 import com.clement.example.demo_news.base.BaseFragment;
 import com.clement.example.demo_news.entity.WxNew;
-import com.clement.example.demo_news.http.manager.RetrofitHttpFactory;
-import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
+import com.clement.example.demo_news.mvp.new_fragment.presenter.NewPresenter;
+import com.clement.example.demo_news.mvp.new_fragment.view.INewView;
 import com.clement.example.demo_news.recycleview.OnItemClickListener;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import butterknife.BindView;
  * Created by clement on 16/11/9.
  */
 
-public class WxNewFragment extends BaseFragment {
+public class WxNewFragment extends BaseFragment implements INewView{
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefreshLayout)
@@ -36,6 +36,8 @@ public class WxNewFragment extends BaseFragment {
     private int page = 1 ;
     //是否正在加载更多
     private boolean loading = false ;
+    //持有presenter对象
+    private NewPresenter presenter;
     @Override
     protected int getFragmentLayoutResId() {
         return R.layout.fragment_news;
@@ -44,6 +46,7 @@ public class WxNewFragment extends BaseFragment {
     @Override
     protected void initVariables() {
         adapter = new WxNewAdapter(getActivity(),null);
+        presenter = new NewPresenter(this) ;
     }
 
     @Override
@@ -66,6 +69,7 @@ public class WxNewFragment extends BaseFragment {
     protected void initBehavior() {
         //开始网络请求
         getData(page,false);
+
         //点击事件
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -118,43 +122,18 @@ public class WxNewFragment extends BaseFragment {
      * @param page 指定请求的位置
      * @param isLoadMore false表示下拉刷新:,true:表示加载更多
      */
-    private void getData(int page, final boolean isLoadMore){
-        //如果是刷新数据
-        if(!isLoadMore){
-            //显示下拉刷新的动画
-            swipeRefreshLayout.setRefreshing(true);
+    @Override
+    public void getData(int page, final boolean isLoadMore){
+        if(presenter!=null){
+            presenter.getData(page,isLoadMore);
         }
-        //网络请求
-        BaseSubscriber<List<WxNew>> subscriber = new BaseSubscriber<List<WxNew>>(){
-            @Override
-            public void onCompleted() {
-                super.onCompleted();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-
-            @Override
-            public void onNext(List<WxNew> wxNews) {
-                super.onNext(wxNews);
-                if(isLoadMore){
-                    doLoadMore(wxNews);
-                }
-                else{
-                    doRefresh(wxNews);
-                }
-            }
-        };
-        //开始进行网络请求
-        RetrofitHttpFactory.getInstance().getWxNew(subscriber,10,page);
     }
 
     /**
      * 刷新
      */
-    private void doRefresh(List<WxNew> wxNews){
+    @Override
+    public void doRefresh(List<WxNew> wxNews){
         //清除原来的数据
         adapter.getList().clear();
         //网络请求成功
@@ -162,11 +141,12 @@ public class WxNewFragment extends BaseFragment {
         //刷新
         adapter.notifyDataSetChanged();
         //取消下拉刷新的动画
-        swipeRefreshLayout.setRefreshing(false);
+        setRefreshing(false);
     }
     /**加载更多
      */
-    private void doLoadMore(List<WxNew> wxNews){
+    @Override
+    public void doLoadMore(List<WxNew> wxNews){
         if(!wxNews.isEmpty()){
             //删除footer
             adapter.getList().remove(adapter.getList().size()-1);
@@ -176,5 +156,11 @@ public class WxNewFragment extends BaseFragment {
             adapter.notifyDataSetChanged();
             loading = false ;
         }
+    }
+
+    @Override
+    public void setRefreshing(boolean refreshing) {
+        //显示下拉刷新的动画
+        swipeRefreshLayout.setRefreshing(refreshing);
     }
 }
