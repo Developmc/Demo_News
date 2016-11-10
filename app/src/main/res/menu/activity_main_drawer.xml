@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/wx_new_fragment"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="热门精选" />
+        <item
+            android:id="@+id/new_fragment"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="新闻资讯" />
+        <item
+            android:id="@+id/picture_fragment"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="美女图片" />
+        <item
+            android:id="@+id/anecdote_fragment"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="奇闻异事" />
+        <item
+            android:id="@+id/hot_spot_fragment"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="旅游热点" />
+
+    </group>
+
+    <item android:title="其他">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="软件分享" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="关于软件" />
+        </menu>
+    </item>
+
+</menu>
