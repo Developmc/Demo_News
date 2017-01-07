@@ -1,6 +1,7 @@
 package com.clement.example.demo_news.http.manager;
 
 import com.clement.example.demo_news.entity.WxNew;
+import com.clement.example.demo_news.http.entity.HttpResult;
 import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
 
 import java.util.List;
@@ -31,6 +32,13 @@ public class RetrofitHttpFactory extends RetrofitHttp {
         //创建观察者
         Observable<List<WxNew>> observable = getService().getWxNews(KEY,num,page)
                 .map(new HttpResultFunc<List<WxNew>>());
+        //订阅
+        toSubscribe(observable,subscriber);
+    }
+
+    public void getObject(BaseSubscriber<HttpResult<Object>> subscriber){
+        //创建观察者
+        Observable<HttpResult<Object>> observable = getService().getObject();
         //订阅
         toSubscribe(observable,subscriber);
     }

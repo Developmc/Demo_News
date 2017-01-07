@@ -1,6 +1,7 @@
 package com.clement.example.demo_news.mvp.new_fragment.presenter;
 
 import com.clement.example.demo_news.entity.WxNew;
+import com.clement.example.demo_news.http.entity.HttpResult;
 import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
 import com.clement.example.demo_news.mvp.new_fragment.model.NewModelImp;
 import com.clement.example.demo_news.mvp.new_fragment.view.INewView;
@@ -56,5 +57,17 @@ public class NewPresenter {
         };
         //开始进行网络请求
         modelImp.getWxNew(subscriber,10,page);
+
+        modelImp.getObject(new BaseSubscriber<HttpResult<Object>>(){
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(HttpResult<Object> objectHttpResult) {
+                super.onNext(objectHttpResult);
+            }
+        });
     }
 }

@@ -16,4 +16,6 @@ import rx.Observable;
 public interface NewsService {
     @GET("wxnew/")
     Observable<HttpResult<List<WxNew>>> getWxNews(@Query("key") String key,@Query("num") int num,@Query("page") int page);
+    @GET("https://192.168.10.94:8443/")
+    Observable<HttpResult<Object>> getObject();
 }
