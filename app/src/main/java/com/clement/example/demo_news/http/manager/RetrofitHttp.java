@@ -1,17 +1,20 @@
 package com.clement.example.demo_news.http.manager;
 
-import android.content.Context;
-
+import com.clement.example.demo_news.BuildConfig;
+import com.clement.example.demo_news.http.customrx.RxApiException;
+import com.clement.example.demo_news.http.customrx.RxApiManager;
 import com.clement.example.demo_news.http.entity.HttpResult;
 import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -30,7 +33,6 @@ public class RetrofitHttp {
     private static Retrofit retrofit = null;
     //OKHttpClient对象
     private static OkHttpClient okHttpClient = null;
-    private Context mContext ;
     //是否缓存
     private boolean isUseCache ;
     private int maxCacheTime = 60;
@@ -52,10 +54,8 @@ public class RetrofitHttp {
     }
 
     /**在application中初始化
-     * @param context
      */
-    public void init(Context context){
-        this.mContext = context ;
+    public void init(){
         initOkHttp();
         initRetrofit();
         //初始化APIService
@@ -71,11 +71,13 @@ public class RetrofitHttp {
         //获取build
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //打印日志
-//        if(Debug.isDebuggerConnected()){
-//            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-//            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-//            builder.addInterceptor(loggingInterceptor);
-//        }
+        if (BuildConfig.DEBUG) {
+            // Log信息拦截器
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            //设置 Debug Log 模式
+            builder.addInterceptor(loggingInterceptor);
+        }
         //设置超时
         builder.connectTimeout(15, TimeUnit.SECONDS);
         builder.readTimeout(20, TimeUnit.SECONDS);
@@ -105,10 +107,12 @@ public class RetrofitHttp {
      * @param <T>
      */
     public <T> void toSubscribe(Observable<T> observable, BaseSubscriber<T> subscriber){
-        observable.subscribeOn(Schedulers.io())
+        Subscription subscription = observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
+        //将subscription添加管理，用于取消请求 (这种方式需要维护每个请求的tag，然后在对应的activity/fragment中手动取消，感觉不够好)
+        RxApiManager.getInstance().add("myTag", subscription);
     }
 
     /**统一处理http的resultCode,并返回HttpResult中的data数据
@@ -119,7 +123,8 @@ public class RetrofitHttp {
         public T call(HttpResult<T> tHttpResult) {
             //如果请求失败
             if(!tHttpResult.isSuccess()){
-                //TODO
+                //请求失败时，抛出异常，方便外面统一处理
+                throw new RxApiException(tHttpResult.getCode(),tHttpResult.getMessage());
             }
             return tHttpResult.getData();
         }
