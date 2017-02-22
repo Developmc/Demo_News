@@ -2,7 +2,7 @@ package com.clement.example.demo_news.mvp.new_fragment.model;
 
 import com.clement.example.demo_news.entity.WxNew;
 import com.clement.example.demo_news.http.manager.RetrofitHttpFactory;
-import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
+import com.clement.example.demo_news.http.subscriber.ProgressSubscriber;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class NewModelImp {
      * @param num
      * @param page
      */
-    public void getWxNew(BaseSubscriber<List<WxNew>> subscriber, int num, int page){
+    public void getWxNew(ProgressSubscriber<List<WxNew>> subscriber, int num, int page){
         RetrofitHttpFactory.getInstance().getWxNew(subscriber,num,page);
     }
 

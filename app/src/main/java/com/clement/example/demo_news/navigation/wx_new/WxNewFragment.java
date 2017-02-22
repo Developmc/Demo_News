@@ -1,6 +1,7 @@
 package com.clement.example.demo_news.navigation.wx_new;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -162,5 +163,10 @@ public class WxNewFragment extends BaseFragment implements INewView{
     public void setRefreshing(boolean refreshing) {
         //显示下拉刷新的动画
         swipeRefreshLayout.setRefreshing(refreshing);
+    }
+
+    @Override
+    public Context getViewContext() {
+        return getActivity();
     }
 }

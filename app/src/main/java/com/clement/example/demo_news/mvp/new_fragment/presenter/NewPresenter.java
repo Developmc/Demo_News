@@ -1,7 +1,7 @@
 package com.clement.example.demo_news.mvp.new_fragment.presenter;
 
 import com.clement.example.demo_news.entity.WxNew;
-import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
+import com.clement.example.demo_news.http.subscriber.ProgressSubscriber;
 import com.clement.example.demo_news.mvp.new_fragment.model.NewModelImp;
 import com.clement.example.demo_news.mvp.new_fragment.view.INewView;
 
@@ -32,20 +32,31 @@ public class NewPresenter {
             newView.setRefreshing(true);
         }
         //网络请求
-        BaseSubscriber<List<WxNew>> subscriber = new BaseSubscriber<List<WxNew>>(){
+//        BaseSubscriber<List<WxNew>> subscriber = new BaseSubscriber<List<WxNew>>(){
+//            @Override
+//            public void onCompleted() {
+//                super.onCompleted();
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                super.onError(e);
+//            }
+//
+//            @Override
+//            public void onNext(List<WxNew> wxNews) {
+//                super.onNext(wxNews);
+//                if(isLoadMore){
+//                    newView.doLoadMore(wxNews);
+//                }
+//                else{
+//                    newView.doRefresh(wxNews);
+//                }
+//            }
+//        };
+        ProgressSubscriber<List<WxNew>> subscriber = new ProgressSubscriber<List<WxNew>>(newView.getViewContext()){
             @Override
-            public void onCompleted() {
-                super.onCompleted();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-
-            @Override
-            public void onNext(List<WxNew> wxNews) {
-                super.onNext(wxNews);
+            public void onProgressNext(List<WxNew> wxNews) {
                 if(isLoadMore){
                     newView.doLoadMore(wxNews);
                 }

@@ -2,9 +2,8 @@ package com.clement.example.demo_news.http.manager;
 
 import com.clement.example.demo_news.BuildConfig;
 import com.clement.example.demo_news.http.customrx.RxApiException;
-import com.clement.example.demo_news.http.customrx.RxApiManager;
 import com.clement.example.demo_news.http.entity.HttpResult;
-import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
+import com.clement.example.demo_news.http.subscriber.ProgressSubscriber;
 
 import java.util.concurrent.TimeUnit;
 
@@ -106,13 +105,13 @@ public class RetrofitHttp {
      * @param subscriber
      * @param <T>
      */
-    public <T> void toSubscribe(Observable<T> observable, BaseSubscriber<T> subscriber){
+    public <T> void toSubscribe(Observable<T> observable, ProgressSubscriber<T> subscriber){
         Subscription subscription = observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
         //将subscription添加管理，用于取消请求 (这种方式需要维护每个请求的tag，然后在对应的activity/fragment中手动取消，感觉不够好)
-        RxApiManager.getInstance().add("myTag", subscription);
+//        RxApiManager.getInstance().add("myTag", subscription);
     }
 
     /**统一处理http的resultCode,并返回HttpResult中的data数据

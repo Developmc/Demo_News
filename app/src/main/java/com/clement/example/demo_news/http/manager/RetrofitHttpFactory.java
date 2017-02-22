@@ -1,7 +1,7 @@
 package com.clement.example.demo_news.http.manager;
 
 import com.clement.example.demo_news.entity.WxNew;
-import com.clement.example.demo_news.http.subscriber.BaseSubscriber;
+import com.clement.example.demo_news.http.subscriber.ProgressSubscriber;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class RetrofitHttpFactory extends RetrofitHttp {
      * @param subscriber
      * @param num
      */
-    public void getWxNew(BaseSubscriber<List<WxNew>> subscriber, int num,int page){
+    public void getWxNew(ProgressSubscriber<List<WxNew>> subscriber, int num, int page){
         //创建观察者
         Observable<List<WxNew>> observable = getService().getWxNews(KEY,num,page)
                 .map(new HttpResultFunc<List<WxNew>>());
